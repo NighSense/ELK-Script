@@ -106,9 +106,6 @@
      name: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ logstash_rpm_package | default('logstash-5.3.3.rpm') }}"
      state: installed
      register: rpm_installation
-
-# Logstash configuration
-   - include: config.yml
   
    - name: Start Logstash
      service: 
