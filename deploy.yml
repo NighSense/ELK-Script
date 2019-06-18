@@ -29,7 +29,7 @@
   
   
   
--- hosts: ElastcServers
+-- hosts: ElasticServers
    tasks:
    - name: Install Elasticsearch
      yum:
