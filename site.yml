@@ -3,25 +3,16 @@
 # Playbook to install the ELK Cluster
 #
 - hosts: ElastcServers
-  remote_user: root
-  become: yes
-  become_user: root
   roles:
   - { role: java }
   - { role: elasticsearch }
   
 hosts: KibanaServers
-  remote_user: root
-  become: yes
-  become_user: root
   roles:
   - { role: java }
   - { role: kibana }
 
 hosts: LogstashServer
-  remote_user: root
-  become: yes
-  become_user: root
   roles:
   - { role: java }
   - { role: logstash }
