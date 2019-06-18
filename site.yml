@@ -32,9 +32,9 @@
 -- hosts: ElastcServers
    tasks:
    - name: Install Elasticsearch
-   yum:
-   name: elasticsearch
-   update_cache: yes
+     yum:
+     name: elasticsearch
+     update_cache: yes
    
 # Update Elasticsearch config file to allow access (to secure Elasticsearch, bind to 'localhost'). 
 
