@@ -1,45 +1,49 @@
 ---
 #
-# Script to install the ELK Cluster
+# Installing Java 8
 #
--- hosts: all
-   tasks:
-   - name: Redhat | Check oracle jdk package
-     stat:
+- hosts: all
+  tasks:
+  - name: Redhat | Check oracle jdk package
+    stat:
      path: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ oracle_jdk_rpm_package | default('jdk-8u144-linux-x64.rpm') }}"
-     register: rpm_package
+    register: rpm_package
 
-   - name: RedHat | Download Oracle JDK RPM package
-     uri:
-     url: "{{ oracle_jdk_rpm_url | default('http://download.oracle.com/otn-pub/java/jdk/8u144-b01/jdk-8u144-linux-x64.rpm') }}"
-     dest: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}"
-     HEADER_Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+  - name: RedHat | Download Oracle JDK RPM package
+    uri:
+      url: "{{ oracle_jdk_rpm_url | default('http://download.oracle.com/otn-pub/java/jdk/8u144-b01/jdk-8u144-linux-x64.rpm') }}"
+      dest: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}"
+      HEADER_Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
 
 # Install/Configure Java package(s)
 
-   - name: RedHat | Install Java Oracle
-     yum:
-     name: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ oracle_jdk_rpm_package | default('jdk-8u144-linux-x64.rpm') }}"
-     state: installed
-     register: rpm_installation
+  - name: RedHat | Install Java Oracle
+    yum:
+      name: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ oracle_jdk_rpm_package | default('jdk-8u144-linux-x64.rpm') }}"
+      state: installed
+    register: rpm_installation
 
-   - name: RedHat | Get Oracle jdk package version
-     shell: "rpm -qip {{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ oracle_jdk_rpm_package | default('jdk-8u144-linux-x64.rpm') }} | grep 'Version' | awk '{print $NF}'"
-     register: jdk_rpm_package_version
+  - name: RedHat | Get Oracle jdk package version
+    shell: "rpm -qip {{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ oracle_jdk_rpm_package | default('jdk-8u144-linux-x64.rpm') }} | grep 'Version' | awk '{print $NF}'"
+    register: jdk_rpm_package_version
   
   
   
--- hosts: ElasticServers
-   tasks:
-   - name: Install Elasticsearch
-     yum:
+#
+# Installing Elasticsearch
+#
+
+# Installing Elasticsearch
+
+  - name: Install Elasticsearch
+    yum:
      name: elasticsearch
      update_cache: yes
    
 # Update Elasticsearch config file to allow access (to secure Elasticsearch, bind to 'localhost'). 
 
-   - name: Updating the config file to allow outside access
-     lineinfile:
+  - name: Updating the config file to allow outside access
+    lineinfile:
      destfile: /etc/elasticsearch/elasticsearch.yml
      regexp: 'network.host:'
      line: 'network.host: 0.0.0.0'
@@ -48,41 +52,44 @@
 
   - name: Updating the port in config file 
     lineinfile:
-    destfile: /etc/elasticsearch/elasticsearch.yml
-    regexp: 'http.port:'
-    line: 'http.port: 9200'
+     destfile: /etc/elasticsearch/elasticsearch.yml
+     regexp: 'http.port:'
+     line: 'http.port: 9200'
  
 # Start Elasticsearch
   - name: Starting Elasticsearch
     service:
-    name: elasticsearch
-    state: started
+     name: elasticsearch
+     state: started
    
    
-   
--- hosts: KibanaServers
-   tasks:
-   - name: Install Kibana
-     yum:
-     name: kibana
-     update_cache: yes
+#
+# Installing Kibana
+#
+
+# Install Kibana 
+
+ - name: Install Kibana
+   yum:
+    name: kibana
+    update_cache: yes
  
 # Configurations
 
-   - name: Updating the config file to allow outside access
-     lineinfile:
+  - name: Updating the config file to allow outside access
+    lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'server.host:'
      line: 'server.host: 0.0.0.0'
 
-   - name: Defining server port
-     lineinfile:
-     destfile: /etc/kibana/kibana.yml
-     regexp: 'server.port:'
-     line: 'server.port: 5601'
+  - name: Defining server port
+    lineinfile:
+    destfile: /etc/kibana/kibana.yml
+    regexp: 'server.port:'
+    line: 'server.port: 5601'
     
-   - name: Defining Elasticsearch URL
-     lineinfile:
+  - name: Defining Elasticsearch URL
+    lineinfile:
      destfile: /etc/kibana/kibana.yml
      regexp: 'elasticsearch.url:'
      line: 'elasticsearch.url: "http://localhost:9200"'
@@ -91,25 +98,27 @@
 
    - name: Starting Kibana
      service:
-     name: kibana
-     state: started
+      name: kibana
+      state: started
+     
+     
+#installing logstash server
 
--- hosts: LogstashServers
-   tasks:
    - name: Download Logstash RPM package
      uri:
-     url: "{{ logstash_rpm_url | default('https://artifacts.elastic.co/downloads/logstash/logstash-5.3.3.rpm') }}"
-     dest: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}"
+      url: "{{ logstash_rpm_url | default('https://artifacts.elastic.co/downloads/logstash/logstash-5.3.3.rpm') }}"
+      dest: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}"
 
    - name: Install Logstash
      yum: 
-     name: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ logstash_rpm_package | default('logstash-5.3.3.rpm') }}"
-     state: installed
+      name: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}/{{ logstash_rpm_package | default('logstash-5.3.3.rpm') }}"
+      state: installed
      register: rpm_installation
+
   
    - name: Start Logstash
      service: 
      name: logstash 
-     state: restarted
-     enabled: yes
+      state: restarted
+      enabled: yes
      ignore_errors: true
