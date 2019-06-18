@@ -4,9 +4,9 @@
 53.23.46.125
 
 
-[KibanaServer]
+[KibanaServers]
 53.23.46.126
 53.23.46.127
 
-[LogStashServer]
+[LogStashServers]
 53.23.46.128
