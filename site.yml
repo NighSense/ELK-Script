@@ -2,13 +2,26 @@
 #
 # Playbook to install the ELK stack + Beats
 #
-- hosts: hostname
+- hosts: ElastcServers
   remote_user: root
   become: yes
   become_user: root
   roles:
   - { role: java }
   - { role: elasticsearch }
+  
+hosts: KibanaServers
+  remote_user: root
+  become: yes
+  become_user: root
+  roles:
+  - { role: java }
   - { role: kibana }
-  - { role: filebeat }
+
+hosts: LogstashServer
+  remote_user: root
+  become: yes
+  become_user: root
+  roles:
+  - { role: java }
   - { role: logstash }
