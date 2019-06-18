@@ -94,7 +94,7 @@
      name: kibana
      state: started
 
--- hosts: LogstashServer
+-- hosts: LogstashServers
    tasks:
    - name: Download Logstash RPM package
      uri:
