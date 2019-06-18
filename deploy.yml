@@ -2,7 +2,7 @@
 #
 # Script to install the ELK Cluster
 #
--- hosts: All
+-- hosts: all
    tasks:
    - name: Redhat | Check oracle jdk package
      stat:
