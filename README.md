@@ -7,7 +7,7 @@ A script for setting up the ELK clusters on AWS Servers
 1 Install Ansible on Host Machine
   Follow this link for instruction:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#intro-installation-   guide
   
-2 Setup 5 EC2 Instances on AWS (Three for Elastic Search and 1 each for Kibana and Logstash)
+2 Setup 5 EC2 CentOS Instances on AWS (Three for Elastic Search and 1 each for Kibana and Logstash)
 
 3 Connect host machines through SSH with ansible command line
 
